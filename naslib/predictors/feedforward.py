@@ -1,13 +1,18 @@
 import numpy as np
+import os
+import logging
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 
+from naslib.utils.utils import get_project_root
 from naslib.utils.utils import AverageMeterGroup
 from naslib.predictors.utils.encodings import encode
 from naslib.predictors import Predictor
+
+logger = logging.getLogger(__name__)
 
 #device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 device = torch.device('cpu') #NOTE: faster on CPU
@@ -17,7 +22,6 @@ def accuracy_mse(prediction, target, scale=100.):
     prediction = prediction.detach() * scale
     target = (target) * scale
     return F.mse_loss(prediction, target)
-
 
 
 class FeedforwardNet(nn.Module):
@@ -55,24 +59,30 @@ class FeedforwardNet(nn.Module):
 
 class FeedforwardPredictor(Predictor):
 
-    def __init__(self, encoding_type='adjacency_one_hot', ss_type='nasbench201'):
-        self.encoding_type = encoding_type
-        self.ss_type = ss_type
+    def __init__(self, encoding_type='adjacency_one_hot', ss_type='nasbench201', config_path=None):
+
+        if config_path is None:
+            config_path = os.path.join(get_project_root(), 'predictors/configs/feedforward_config.json')
+        super().__init__(encoding_type=encoding_type, 
+                         ss_type=ss_type, 
+                         config_path=config_path)
 
     def get_model(self, **kwargs):
         predictor = FeedforwardNet(**kwargs)
         return predictor
 
     def fit(self, xtrain, ytrain, train_info=None,
-            num_layers=20,
-            layer_width=20,
             loss='mae',
             epochs=500,
-            batch_size=32,
-            lr=.001,
-            verbose=0,
-            regularization=0.2):
-
+            verbose=0):
+        
+        logger.info(self.model_config)
+        num_layers = self.model_config['param:num_layers']
+        layer_width = self.model_config['param:layer_width']
+        batch_size = self.model_config['param:batch_size']
+        lr = self.model_config['param:lr']
+        regularization = self.model_config['param:regularization']
+        
         self.mean = np.mean(ytrain)
         self.std = np.std(ytrain)
 

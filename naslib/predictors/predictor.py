@@ -1,8 +1,15 @@
+from ConfigSpace.read_and_write import json as config_space_json_r_w
+
 class Predictor:
     
-    def __init__(self, ss_type=None, encoding_type=None):
-        self.ss_type = ss_type
+    def __init__(self, ss_type=None, encoding_type=None, config_path=None):
+        if ss_type is not None:
+            self.ss_type = ss_type
         self.encoding_type = encoding_type
+        
+        # set the config
+        model_configspace = config_space_json_r_w.read(open(config_path, 'r').read())
+        self.model_config = model_configspace.get_default_configuration().get_dictionary()
         
     def set_ss_type(self, ss_type):
         self.ss_type = ss_type

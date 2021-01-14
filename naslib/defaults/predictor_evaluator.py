@@ -208,6 +208,7 @@ class PredictorEvaluator(object):
             raise NotImplementedError()
 
         self._log_to_json()
+        return self.results[-1]['pearson']
 
     def compare(self, ytest, test_pred):
         ytest = np.array(ytest)

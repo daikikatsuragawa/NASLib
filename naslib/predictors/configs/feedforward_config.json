@@ -1,0 +1,48 @@
+{
+  "hyperparameters": [      
+    {
+      "name": "param:num_layers",
+      "type": "uniform_int",
+      "log": false,
+      "lower": 5,
+      "upper": 40,
+      "default": 20
+    },
+    {
+      "name": "param:layer_width",
+      "type": "uniform_int",
+      "log": false,
+      "lower": 5,
+      "upper": 40,
+      "default": 20
+    },
+    {
+      "name": "param:batch_size",
+      "type": "uniform_int",
+      "log": false,
+      "lower": 8,
+      "upper": 64,
+      "default": 32
+    },
+    {
+      "name": "param:lr",
+      "type": "uniform_float",
+      "log": true,
+      "lower": 0.00001,
+      "upper": 0.1,
+      "default": 0.001
+    },
+    {
+      "name": "param:regularization",
+      "type": "uniform_float",
+      "log": true,
+      "lower": 0.001,
+      "upper": 0.3,
+      "default": 0.2
+    }
+  ],
+  "conditions": [],
+  "forbiddens": [],
+  "python_module_version": "0.0.1",
+  "json_format_version": 0.1
+}
